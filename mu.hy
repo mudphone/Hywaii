@@ -20,7 +20,8 @@
   (instance? (type (var 0)) x))
 
 ;; State
-(def empty-state [{} 0])
+(def empty-s (pmap {}))
+(def empty-state [empty-s 0])
 
 
 ;; walk
@@ -43,13 +44,9 @@
     u))
 
 ;; unify
-(def mzero nil)
-(defn unit [sc] (cons sc mzero))
-
 (defn list? [x] (instance? list x))
 (defn assocr [m k v]
-  (assoc m k v)
-  m)
+  (.set m k v))
 
 ;; (unify 1337 1337 {})
 ;; => {}
@@ -87,3 +84,26 @@
              (unify (cdr u) (cdr v) s2)))]
      
      [True (and (= u v) s)])))
+
+;; ==
+(def mzero nil)
+(defn unit [sc] (cons sc mzero))
+
+(defn == [u v]
+  (fn [[s c]]
+    (let [s1 (unify u v s)]
+      (if (coll? s1) (unit [s1 c]) mzero))))
+
+;; ((== 1 1) empty-state)
+;; => ([pmap({}) 0])
+;;
+;; ((== 1 2) empty-state)
+;; => nil
+;;
+;; ((callfresh (fn [q] (== q 5))) empty-state)
+;; => ([pmap({(0,): 5}) 1])
+;;
+;; 
+(defn callfresh [f]
+  (fn [[s c]]
+    ((f (var c)) [s (inc c)])))
