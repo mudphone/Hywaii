@@ -1,7 +1,5 @@
 (import [pyrsistent [pvector :as pvec
-                     pmap :as pmap
-                     pset :as pset]]
-        [pyrsistent :as pyr]
+                     pmap :as pmap]]
         [types])
 
 ;; This is my attempt at implementing μKanren in Hy.
@@ -13,43 +11,23 @@
 ;; EuroClojure, Barcelona, Spain, 25 June 2015.
 ;; https://www.youtube.com/watch?v=2e8VFSSNORg
 
-;; Cons
-(defclass Cons []
-  [a nil
-   d nil]
-  (defn --init-- [self a &optional [d nil]]
-    (if (nil? a) (raise (ValueError "Cannot store nil (list terminating) value")))
-    (setv self.a a)
-    (setv self.d d))
-  (defn car [self] self.a)
-  (defn cdr [self] self.d)
-  (defn str-items [self]
-    (let [items (if (nil? self.d)
-                  [self.a]
-                  [self.a self.d])
-          s (.join " " (list
-                            (map (fn [x]
-                                   (cond [(nil? x) "nil"]
-                                         [(instance? Cons x) (.str-items x)]
-                                         [True (.__str__ x)]))
-                                 items)))]
-      s))
-  (defn --repr-- [self]
-    (let [items (.str-items self)]
-      (.join "" ["(" items ")"]))))
-
 (defn to-cons-list [xs]
   (cond
    [(empty? xs) nil]
-   [(= (len xs) 1) (Cons (first xs))]
-   [(= (len xs) 2) (Cons (first xs) (second xs))]
-   [True (Cons (first xs) (to-cons-list (list (rest xs))))]))
+   [(= (len xs) 1) (cons (first xs) nil)]
+   [(= (len xs) 2) (apply cons xs)]
+   [True (cons (first xs) (to-cons-list (list (rest xs))))]))
 
 (defn clist [&rest xs]
   (to-cons-list (list xs)))
 
+(defn list? [x]
+  (instance? list x))
+
 (defn clist? [x]
-  (instance? Cons x))
+  (or 
+   (instance? (type (cons 0 0)) x)
+   (and (list? x) (= (len x) 1))))
 
 (defn atom? [x]
   (and (not (nil? x))
@@ -109,7 +87,6 @@
 ;; (unify (clist 1 2 3) (clist 1 2 (var 0)) (pmap {}))
 ;; => pmap({pvector([0]): 3})
 ;;
-;;
 (defn unify [u1 v1 s1]
   (let [u (walk u1 s1)
         v (walk v1 s1)
@@ -121,15 +98,15 @@
      [(var? v) (assocr s v u)]
 
      [(and (clist? u) (clist? v))
-      (let [s2 (unify (.car u) (.car v) s)]
+      (let [s2 (unify (car u) (car v) s)]
         (and (coll? s2)
-             (unify (.cdr u) (.cdr v) s2)))]
+             (unify (cdr u) (cdr v) s2)))]
      
      [True (and (= u v) s)])))
 
 ;; ==
 (def mzero nil)
-(defn unit [sc] (Cons sc mzero))
+(defn unit [sc] (cons sc mzero))
 
 (defn == [u v]
   (fn [[s c]]
@@ -154,19 +131,16 @@
 ;; "or" and "and" | "and" and "or"
 ;;
 (defn fn? [f]
-  ;; (instance? (type identity) f)
   (instance? types.FunctionType f))
 
 ;; (mplus (clist 1 2) (clist 3 4))
-;; => (1 2 3 4)
+;; => (1 2 3 . 4)
 (defn mplus [$1 $2]
   (cond
    [(fn? $1) (fn [] (mplus $2 ($1)))]
 
-   [(atom? $1)
-    (Cons $1 (mplus nil $2))]
    [(clist? $1)
-    (Cons (.car $1) (mplus (.cdr $1) $2))]
+    (cons (car $1) (mplus (cdr $1) $2))]
    
    [True $2]))
 
@@ -175,7 +149,7 @@
    [(fn? $) (fn [] (bind ($) g))]
    
    [(clist? $)
-    (mplus (g (.car $)) (bind (.cdr $) g))]
+    (mplus (g (car $)) (bind (cdr $) g))]
 
    [True mzero]))
 
@@ -222,8 +196,10 @@
   (if (zero? n) nil
       (let [$ (pull $1)]
         (if (nil? $) nil
-            (Cons (.car $)
-                  (ptake (dec n) (.cdr $)))))))
+            (cons (car $)
+                  (ptake (dec n) (cdr $)))))))
 
-;; 
+;; (ptake 10 (callgoal fives-and-sixes))
+;; => ([pmap({pvector([0]): 5}), 1] [pmap({pvector([0]): 6}), 1] ...
+;;    alternating ... x5 pairs
 (def fives-and-sixes (callfresh (fn [x] (disj (fives x) (sixes x)))))
