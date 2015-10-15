@@ -17,5 +17,5 @@ The Lisp family of languages has inspired features which have found their way in
 
 I’m not an expert on any of these things, just interested in hacking on fun tools and learning about new things. I’ve found Hy to be a unique opportunity to explore Python internals and data science libraries, while also playing to the strengths of Python. So, while I’m not an expert at miniKanren or Python, I hope to convey the learning opportunity posed by the exploration of the mixture of Lisp and Python. My μKanren implementation in Hy is heavily inspired by Bodil Stokke’s Clojure implementation, and reading "μKanren: A Minimal Functional Core for Relational Programming," by Jason Hemann and Daniel P. Friedman.
 
-#### License
-MIT, see LICENSE file
+### License
+GNU GENERAL PUBLIC LICENSE, see LICENSE file
