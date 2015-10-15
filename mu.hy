@@ -1,5 +1,4 @@
-(import [pyrsistent [pvector :as pvec
-                     pmap :as pmap
+(import [pyrsistent [pmap :as pmap
                      pset :as pset]]
         [types])
 
@@ -29,10 +28,6 @@
   (or 
    (instance? (type (cons 0 0)) x)
    (and (list? x) (= (len x) 1))))
-
-(defn atom? [x]
-  (and (not (nil? x))
-       (not (clist? x))))
 
 
 ;; Variables "are represented as vectors that hold their variable index."
