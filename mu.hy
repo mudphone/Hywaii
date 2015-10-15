@@ -205,3 +205,8 @@
 ;; => ([pmap({pset([0]): 5}), 1] [pmap({pset([0]): 6}), 1] ...
 ;;    alternating ... x5 pairs
 (def fives-and-sixes (callfresh (fn [x] (disj (fives x) (sixes x)))))
+
+(def a-and-b
+  (conj
+   (callfresh (fn [a] (== a 7)))
+   (callfresh (fn [b] (disj (== b 5) (== b 6))))))
