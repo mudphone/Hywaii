@@ -24,14 +24,15 @@
 (defn list? [x]
   (instance? list x))
 
+;; Have to check for normal lists too, because the Hy `cons`
+;; creates a normal list then cons-ing something to nil.
 (defn clist? [x]
   (or 
    (instance? (type (cons 0 0)) x)
-   (and (list? x) (= (len x) 1))))
+   (and (list? x) (> (len x) 0))))
 
 
 ;; Variables "are represented as vectors that hold their variable index."
-;; (defn var [c] (, c))
 (defn var [c] (pset [c]))
 
 (defn var? [x]
@@ -100,7 +101,10 @@
      
      [True (and (= u v) s)])))
 
-(def mzero nil)
+;; Either the empty list `'()` or nil will do here.
+;; I chose the empty list, because it shows up in the REPL.
+;; nil results do not print in the REPL.
+(def mzero '())
 (defn unit [sc] (cons sc mzero))
 
 ;; ==
@@ -109,7 +113,7 @@
 ;; => ([pmap({}) 0])
 ;;
 ;; ((== 1 2) empty-state)
-;; => nil
+;; => ()
 ;;
 (defn == [u v]
   (fn [[s c]]
@@ -201,6 +205,8 @@
 ;;    alternating ... x5 pairs
 (def fives-and-sixes (callfresh (fn [x] (disj (fives x) (sixes x)))))
 
+;; (callgoal a-and-b)
+;; => ([pmap({pset([1]): 5, pset([0]): 7}) 2] [pmap({pset([1]): 6, pset([0]): 7}) 2])
 (def a-and-b
   (conj
    (callfresh (fn [a] (== a 7)))
