@@ -2,7 +2,7 @@
 
 This is my attempt at implementing μKanren in [Hy].
 
-All credit for [μKanren to Jason Hemann and Daniel P. Friedman (clearly explained it in their paper)][muKanren paper].
+All credit for [μKanren to Jason Hemann and Daniel P. Friedman (clearly explained in their paper)][muKanren paper].
 
 Much appreciation to Bodil Stokke for explaining things clearly in her talk:
 [μKanren: Running the Little Things Backwards, EuroClojure, Barcelona, Spain, 25 June 2015][talk at EuroClojure].
