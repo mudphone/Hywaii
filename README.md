@@ -1,12 +1,11 @@
 # Hywai‘i
 
-This is my attempt at implementing μKanren in Hy.
+This is my attempt at implementing μKanren in [Hy].
 
-All credit for [μKanren to Jason Hemann and Daniel P. Friedman, and for explaining it in their paper][muKanren paper].
+All credit for [μKanren to Jason Hemann and Daniel P. Friedman (clearly explained it in their paper)][muKanren paper].
 
 Much appreciation to Bodil Stokke for explaining things clearly in her talk:
-[μKanren: Running the Little Things Backwards
-EuroClojure, Barcelona, Spain, 25 June 2015][talk at EuroClojure].
+[μKanren: Running the Little Things Backwards, EuroClojure, Barcelona, Spain, 25 June 2015][talk at EuroClojure].
 
 ## μKanren Relational Programming Basics, with Hy
 In ["How to Become a Hacker,"][hacker-howto] Eric Raymond explains that "Lisp is worth learning" to "make you a better programmer... even if you never actually use Lisp itself a lot." With [Hy], a fun Lisp powered by—and bi-directionally interoperable with—Python, we'll explore the μKanren relational logic system without leaving Python's comfy surroundings.
