@@ -35,6 +35,16 @@
    (cons? x)
    (and (list? x) (> (len x) 0))))
 
+(defn atom? [x]
+  "Test for a atomic value, not a list, and not nil"
+  (and (not (clist? x))
+       (not (nil? x))
+       (not (= x '()))))
+
+(defn fn? [f]
+  "Tests for a function"
+  (instance? types.FunctionType f))
+
 
 ;; Variables "are represented as vectors that hold their variable index."
 (defn var [c]
@@ -160,16 +170,6 @@
   (fn [[s c]]
     ((f (var c)) [s (inc c)])))
 
-
-(defn fn? [f]
-  "Tests for a function"
-  (instance? types.FunctionType f))
-
-(defn atom? [x]
-  "Test for a atomic value, not a list, and not nil"
-  (and (not (clist? x))
-       (not (nil? x))
-       (not (= x '()))))
 
 ;; "or" and "and" | "and" and "or"
 
