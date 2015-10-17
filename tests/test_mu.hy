@@ -1,5 +1,5 @@
-(import [pyrsistent [pmap]])
-(import [mu [*]])
+(import [pyrsistent [pmap]]
+        [mu [*]])
 
 ;; Cons
 (defn test-to-cons-list []
