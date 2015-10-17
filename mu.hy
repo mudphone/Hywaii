@@ -71,9 +71,6 @@
 ;; creates a normal list then cons-ing something to nil.
 (defn clist? [x]
   "Checks if this is a list of cons cells or a non-empty normal list"
-  ;; (or 
-  ;;  (cons? x)
-  ;;  (and (list? x) (> (len x) 0)))
   (instance? Cons x))
 
 (defn atom? [x]
@@ -133,6 +130,7 @@
 ;;
 ;; (walk (var 1) (pmap {(var 0) 1337 (var 1) (var 0)}))
 ;; => 1337
+;;
 (defn walk [u s]
   "Recursive lookup of logic var keys in a state map"
   (if (and (var? u) (stor-contains? s u))
@@ -198,7 +196,7 @@
 ;; => ([pmap({}) 0])
 ;;
 ;; ((== 1 2) empty-state)
-;; => ()
+;; => nil
 ;;
 (defn == [u v]
   "Takes two terms as args and returns a goal"
