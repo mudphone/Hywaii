@@ -32,7 +32,7 @@
 (defn clist? [x]
   "Checks if this is a list of cons cells or a non-empty normal list"
   (or 
-   (instance? (type (cons 0 0)) x)
+   (cons? x)
    (and (list? x) (> (len x) 0))))
 
 
@@ -46,7 +46,21 @@
   (instance? (type (var 0)) x))
 
 ;; State
-(def empty-s (pmap {}))
+(defn stor [&optional [m {}]]
+  (pmap m))
+
+(defn stor-get [s k]
+  (.get s k))
+
+(defn stor-contains? [s k]
+  (.__contains__ s k))
+
+(defn stor-assoc [s k v]
+  "Associates key with value in a given state map, returning updated
+   map"
+  (.set s k v))
+
+(def empty-s (stor))
 (def empty-state [empty-s 0])
 
 
@@ -65,17 +79,12 @@
 ;; => 1337
 (defn walk [u s]
   "Recursive lookup of logic var keys in a state map"
-  (if (and (var? u) (.__contains__ s u))
-    (walk (.get s u) s)
+  (if (and (var? u) (stor-contains? s u))
+    (walk (stor-get s u) s)
     u))
 
 ;; unify
-(defn assocr
-  "Associates key with value in a given state map, returning updated
-   map"
-  [m k v]
-  (.set m k v))
-
+;;
 ;; (unify 1337 1337 (pmap {}))
 ;; => pmap({})
 ;;
@@ -110,8 +119,8 @@
     (cond
      [(and (var? u) (var? v) (= u v)) s]
 
-     [(var? u) (assocr s u v)]
-     [(var? v) (assocr s v u)]
+     [(var? u) (stor-assoc s u v)]
+     [(var? v) (stor-assoc s v u)]
 
      [(and (clist? u) (clist? v))
       (let [s2 (unify (car u) (car v) s)]
@@ -156,6 +165,12 @@
   "Tests for a function"
   (instance? types.FunctionType f))
 
+(defn atom? [x]
+  "Test for a atomic value, not a list, and not nil"
+  (and (not (clist? x))
+       (not (nil? x))
+       (not (= x '()))))
+
 ;; "or" and "and" | "and" and "or"
 
 ;; (mplus (clist 1 2) (clist 3 4))
@@ -167,6 +182,8 @@
   (cond
    [(fn? $1) (fn [] (mplus $2 ($1)))]
 
+   [(atom? $1)
+    (cons $1 $2)]
    [(clist? $1)
     (cons (car $1) (mplus (cdr $1) $2))]
    
@@ -178,7 +195,9 @@
    stream"
   (cond
    [(fn? $) (fn [] (bind ($) g))]
-   
+
+   [(atom? $)
+    (mplus (g $) mzero)]
    [(clist? $)
     (mplus (g (car $)) (bind (cdr $) g))]
 
