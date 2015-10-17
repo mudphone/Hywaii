@@ -6,35 +6,35 @@
   (assert (nil? (to-cons-list [])))
 
   (let [cell1 (to-cons-list [1])]
-    (assert (= (car cell1) 1))
-    (assert (= (cdr cell1) '())))
+    (assert (= (ccar cell1) 1))
+    (assert (nil? (ccdr cell1))))
 
   (let [cell2 (to-cons-list [1 2])]
-    (assert (= (car cell2) 1))
-    (assert (= (cdr cell2) 2)))
+    (assert (= (ccar cell2) 1))
+    (assert (= (ccdr cell2) 2)))
 
   (let [cell3 (to-cons-list [1 2 3])]
-    (assert (= (car cell3) 1))
-    (assert (= (cdr cell3) (to-cons-list [2 3])))
-    (assert (= (car (cdr cell3)) 2))
-    (assert (= (cdr (cdr cell3)) 3))))
+    (assert (= (ccar cell3) 1))
+    (assert (= (ccdr cell3) (to-cons-list [2 3])))
+    (assert (= (ccar (ccdr cell3)) 2))
+    (assert (= (ccdr (ccdr cell3)) 3))))
 
 (defn test-clist []
   (assert (nil? (clist)))
 
   (let [cell1 (clist 1)]
-    (assert (= (car cell1) 1))
-    (assert (= (cdr cell1) '())))
+    (assert (= (ccar cell1) 1))
+    (assert (= (ccdr cell1) nil)))
 
   (let [cell2 (clist 1 2)]
-    (assert (= (car cell2) 1))
-    (assert (= (cdr cell2) 2)))
+    (assert (= (ccar cell2) 1))
+    (assert (= (ccdr cell2) 2)))
 
   (let [cell3 (clist 1 2 3)]
-    (assert (= (car cell3) 1))
-    (assert (= (cdr cell3) (clist 2 3)))
-    (assert (= (car (cdr cell3)) 2))
-    (assert (= (cdr (cdr cell3)) 3))))
+    (assert (= (ccar cell3) 1))
+    (assert (= (ccdr cell3) (clist 2 3)))
+    (assert (= (ccar (ccdr cell3)) 2))
+    (assert (= (ccdr (ccdr cell3)) 3))))
 
 (defn test-list? []
   (assert (list? '()))
@@ -89,68 +89,86 @@
 
 (defn test-unit []
   (let [$ (unit [(stor) 0])]
-    (assert (= (car (car $)) (stor)))
-    (assert (= (last (car $)) 0))
-    (assert (= (cdr $) mzero))))
+    (assert (= (first (ccar $)) (stor)))
+    (assert (= (last (ccar $)) 0))
+    (assert (= (ccdr $) mzero))))
 
 (defn test-== []
   (let [$ ((== 1 1) empty-state)]
-    (assert (= (car $) empty-state))
-    (assert (= (len $) 1))))
+    (assert (= (ccar $) empty-state))
+    (assert (= (clen $) 1))))
 
 (defn test-callfresh []
   (let [$ ((callfresh (fn [q] (== q 5))) empty-state)]
-    (assert (= (car $) [(stor {(var 0) 5}) 1]))
-    (assert (= (len $) 1))))
+    (assert (= (ccar $) [(stor {(var 0) 5}) 1]))
+    (assert (= (clen $) 1))))
 
 (defn test-fn? []
   (assert (fn? (fn [q] q))))
 
-(defn test-atom? []
-  (assert (atom? 1))
-  (assert (atom? (fn [x] x)))
-  (assert (not (atom? '())))
-  (assert (not (atom? '(1))))
-  (assert (not (atom? '(1 2))))
-  (assert (not (atom? (clist))))
-  (assert (not (atom? (clist 1))))
-  (assert (not (atom? (clist 1 2))))
-  (assert (not (atom? (clist 1 2 3))))
-  (assert (atom? (cdr (clist 1 2)))))
+(defn test-atom?-int []
+  (assert (atom? 1)))
+
+(defn test-atom?-fn []
+  (assert (atom? (fn [x] x))))
+
+(defn test-atom?-empty-list []
+  (assert (atom? '())))
+
+(defn test-atom?-single-item []
+  (assert (atom? '(1))))
+
+(defn test-atom?-two-items []
+  (assert (atom? '(1 2))))
+
+(defn test-atom?-empty-list []
+  (assert (not (atom? (clist)))))
+
+(defn test-atom?-single-item-cell []
+  (assert (not (atom? (clist 1)))))
+
+(defn test-atom?-pair []
+  (assert (not (atom? (clist 1 2)))))
+
+(defn test-atom?-three-item-cell []
+  (assert (not (atom? (clist 1 2 3)))))
+
+(defn test-atom?-second-item-in-pair []
+  (assert (atom? (ccdr (clist 1 2)))))
 
 (defn test-mplus []
   (assert (= (mplus (clist 1 2) (clist 3 4)) (clist 1 2 3 4))))
 
 (defn test-disj []
   (let [$ ((callfresh (fn [q] (disj (== q 1) (== q 2)))) empty-state)]
-    (assert (= (car $) [(stor {(var 0) 1}) 1]))
-    (assert (= (last $) [(stor {(var 0) 2}) 1]))))
+    (assert (= (ccar $) [(stor {(var 0) 1}) 1]))
+    (assert (= (ccar (ccdr $)) [(stor {(var 0) 2}) 1]))))
 
 (defn test-conj []
   (let [$ ((callfresh (fn [q] (conj (== q 1) (== q 1)))) empty-state)]
-    (assert (= (car $) [(stor {(var 0) 1}) 1]))
-    (assert (= (len $) 1))))
+    (assert (= (ccar $) [(stor {(var 0) 1}) 1]))
+    (assert (= (clen $) 1))))
 
 (defn test-callgoal []
   (let [$ (callgoal (callfresh (fn [q] (conj (== q 1) (== q 1)))))]
-    (assert (= (car $) [(stor {(var 0) 1}) 1]))
-    (assert (= (len $) 1))))
+    (assert (= (ccar $) [(stor {(var 0) 1}) 1]))
+    (assert (= (clen $) 1))))
 
 (defn test-ptake []
-  (assert (= (len (ptake 10 (callgoal (callfresh fives)))) 10)))
+  (assert (= (clen (ptake 10 (callgoal (callfresh fives)))) 10)))
 
 (defn test-trampolining-streams []
   (let [fives-n-sixes (callfresh (fn [x] (disj (fives x) (sixes x))))
         $ (ptake 10 (callgoal fives-n-sixes))]
-    (assert (= (len $) 10))
-    (assert (= (car $)    [(stor {(var 0) 5}) 1]))
-    (assert (= (second $) [(stor {(var 0) 6}) 1]))))
+    (assert (= (clen $) 10))
+    (assert (= (ccar $)    [(stor {(var 0) 5}) 1]))
+    (assert (= (ccar (ccdr $)) [(stor {(var 0) 6}) 1]))))
 
 (defn test-conj-and-disj []
   (let [$ (callgoal
            (conj
             (callfresh (fn [a] (== a 7)))
             (callfresh (fn [b] (disj (== b 5) (== b 6))))))]
-    (assert (= (len $) 2))
-    (assert (= (car $)  [(stor {(var 1) 5 (var 0) 7}) 2]))
-    (assert (= (last $) [(stor {(var 1) 6 (var 0) 7}) 2]))))
+    (assert (= (clen $) 2))
+    (assert (= (ccar $)  [(stor {(var 1) 5 (var 0) 7}) 2]))
+    (assert (= (ccar (ccdr $)) [(stor {(var 1) 6 (var 0) 7}) 2]))))

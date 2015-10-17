@@ -11,13 +11,53 @@
 ;; EuroClojure, Barcelona, Spain, 25 June 2015.
 ;; https://www.youtube.com/watch?v=2e8VFSSNORg
 
+;; Cons
+(defclass Cons []
+  [a nil
+   d nil]
+  (defn --init-- [self a &optional [d nil]]
+    (if (nil? a) (raise (ValueError "Cannot store nil (list terminating) value")))
+    (setv self.a a)
+    (setv self.d d))
+  (defn car [self] self.a)
+  (defn cdr [self] self.d)
+  (defn str-items [self]
+    (let [items (if (nil? self.d)
+                  [self.a]
+                  [self.a self.d])
+          s (.join " " (list
+                        (map (fn [x]
+                               (cond [(nil? x) "nil"]
+                                     [(instance? Cons x) (.str-items x)]
+                                     [True (.__str__ x)]))
+                             items)))]
+      s))
+  (defn --repr-- [self]
+    (let [items (.str-items self)]
+      (.join "" ["(" items ")"])))
+  (defn --eq-- [self other]
+    (and (= (type self) (type other))
+         (= (.car self) (.car other))
+         (= (.cdr self) (.cdr other))))
+  (defn --ne-- [self other]
+    (not (.--eq-- self other))))
+
+(defn ccons [a d]
+  (clist a d))
+
+(defn ccar [c]
+  (.car c))
+
+(defn ccdr [c]
+  (.cdr c))
+
 (defn to-cons-list [xs]
   "Creates a list of cons cells from a normal list"
   (cond
    [(empty? xs) nil]
-   [(= (len xs) 1) (cons (first xs) nil)]
-   [(= (len xs) 2) (apply cons xs)]
-   [True (cons (first xs) (to-cons-list (list (rest xs))))]))
+   [(= (len xs) 1) (Cons (first xs))]
+   [(= (len xs) 2) (Cons (first xs) (second xs))]
+   [True (Cons (first xs) (to-cons-list (list (rest xs))))]))
 
 (defn clist [&rest xs]
   "Creates a list of cons cells from given args"
@@ -31,15 +71,21 @@
 ;; creates a normal list then cons-ing something to nil.
 (defn clist? [x]
   "Checks if this is a list of cons cells or a non-empty normal list"
-  (or 
-   (cons? x)
-   (and (list? x) (> (len x) 0))))
+  ;; (or 
+  ;;  (cons? x)
+  ;;  (and (list? x) (> (len x) 0)))
+  (instance? Cons x))
 
 (defn atom? [x]
   "Test for a atomic value, not a list, and not nil"
   (and (not (clist? x))
-       (not (nil? x))
-       (not (= x '()))))
+       (not (nil? x))))
+
+(defn clen [c]
+  (cond
+   [(nil? c) 0]
+   [(clist? c) (inc (clen (ccdr c)))]
+   [True 1]))
 
 (defn fn? [f]
   "Tests for a function"
@@ -133,19 +179,18 @@
      [(var? v) (stor-assoc s v u)]
 
      [(and (clist? u) (clist? v))
-      (let [s2 (unify (car u) (car v) s)]
+      (let [s2 (unify (ccar u) (ccar v) s)]
         (and (coll? s2)
-             (unify (cdr u) (cdr v) s2)))]
+             (unify (ccdr u) (ccdr v) s2)))]
      
      [True (and (= u v) s)])))
 
-;; Either the empty list `'()` or nil will do here.
-;; I chose the empty list, because it shows up in the REPL.
-;; nil results do not print in the REPL.
-(def mzero '())
+;; empty result
+(def mzero nil)
+
 (defn unit [sc]
   "Lifts state into a stream"
-  (cons sc mzero))
+  (ccons sc mzero))
 
 ;; ==
 ;;
@@ -182,10 +227,9 @@
   (cond
    [(fn? $1) (fn [] (mplus $2 ($1)))]
 
-   [(atom? $1)
-    (cons $1 $2)]
+   [(atom? $1) (ccons $1 $2)]
    [(clist? $1)
-    (cons (car $1) (mplus (cdr $1) $2))]
+    (ccons (ccar $1) (mplus (ccdr $1) $2))]
    
    [True $2]))
 
@@ -199,7 +243,7 @@
    [(atom? $)
     (mplus (g $) mzero)]
    [(clist? $)
-    (mplus (g (car $)) (bind (cdr $) g))]
+    (mplus (g (ccar $)) (bind (ccdr $) g))]
 
    [True mzero]))
 
@@ -255,8 +299,8 @@
   (if (zero? n) nil
       (let [$ (pull $1)]
         (if (nil? $) nil
-            (cons (car $)
-                  (ptake (dec n) (cdr $)))))))
+            (ccons (ccar $)
+                   (ptake (dec n) (ccdr $)))))))
 
 ;; (ptake 10 (callgoal fives-and-sixes))
 ;; => ([pmap({pset([0]): 5}), 1] [pmap({pset([0]): 6}), 1] ...
