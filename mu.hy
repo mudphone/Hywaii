@@ -16,8 +16,9 @@
   [a nil
    d nil]
   (defn --init-- [self a &optional [d nil]]
-    (if (nil? a) (raise (ValueError "Cannot store nil (list terminating) value")))
-    (setv self.a a)
+    ;; (if (nil? a) (raise (ValueError "Cannot store nil (list terminating) value")))
+    
+    (setv self.a (if (nil? a) 'None a))
     (setv self.d d))
   (defn car [self] self.a)
   (defn cdr [self] self.d)
@@ -50,6 +51,17 @@
 
 (defn ccdr [c]
   (.cdr c))
+
+(defn cmap [f c]
+  (cond
+   [(nil? (ccdr c))
+    (clist (f (ccar c)))]
+   
+   [(clist? (ccdr c))
+    (ccons (f (ccar c)) (cmap f (ccdr c)))]
+
+   [True (clist (f (ccar c)) (f (ccdr c)))]))
+
 
 (defn to-cons-list [xs]
   "Creates a list of cons cells from a normal list"
