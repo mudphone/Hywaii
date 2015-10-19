@@ -6,8 +6,6 @@
       (and (list? x)
            (not (empty? x)))))
 
-;; (defmacro zzz [g]
-;;   `(fn [sc#] (fn [] (~g sc#))))
 (defmacro/g! zzz [g]
   "The snooze macro"
   `(fn [g!sc] (fn [] (~g g!sc))))
@@ -19,53 +17,16 @@
   "An inifinte goal constructor of sevens, using the snooze macro"
   (disj (== x 7) (zzz (sevens x))))
 
-;; (defmacro conj+ [g0 & gs]
-;;   (if (seq gs)
-;;     `(conj (zzz ~g0) (conj+ ~@gs))
-;;     `(zzz ~g0)))
-;; (defmacro conj+ [g0 &rest gs]
-;;   (if (seq? gs)
-;;     `(conj (zzz ~g0) (conj+ ~@gs))
-;;     `(zzz ~g0)))
 (defmacro conj+ [&rest gs]
   (if (= (len gs) 1)
     `(zzz ~(car gs))
     `(conj (zzz ~(car gs)) (conj+ ~@(cdr gs)))))
 
-;; (defmacro disj+ [g0 & gs]
-;;   (if (seq gs)
-;;     `(disj (zzz ~g0) (disj+ ~@gs))
-;;     `(zzz ~g0)))
 (defmacro disj+ [g0 &rest gs]
   (if (seq? gs)
     `(disj (zzz ~g0) (disj+ ~@gs))
     `(zzz ~g0)))
 
-;; (defmacro fresh [vars & body]
-;;   `(callfresh
-;;     (fn [~(first vars)]
-;;       ~(if (seq (rest vars))
-;;          `(fresh ~(rest vars) (conj+ ~@body))
-;;          `(conj+ ~@body)))))
-;; (defmacro fresh [vars &rest body]
-;;   `(callfresh
-;;     (fn [~(car vars)]
-;;       ~(if (seq? (cdr vars))
-;;          `(fresh ~(cdr vars) (conj+ ~@body))
-;;          `(conj+ ~@body)))))
-
-;; (defmacro fresh [vars &rest body]
-;;   `(callfresh
-;;     (fn [~(car vars)]
-;;       ~(if (seq? (cdr vars))
-;;          `(fresh ~(cdr vars) (conj+ ~@body))
-;;          `(conj+ ~@body)))))
-;; (defmacro fresh [vars &rest body]
-;;   (if (seq? vars)
-;;     `(callfresh
-;;       (fn [~(car vars)]
-;;         (fresh ~(cdr vars) (conj+ ~@body))))
-;;     `(conj+ ~@body)))
 (defmacro fresh [vars &rest body]
   (if (empty? vars)
     `(conj+ ~@body)
@@ -73,15 +34,6 @@
       (fn [~(car vars)]
         (fresh ~(cdr vars) ~@body)))))
 
-;; (defn walk* [v s]
-;;   (let [v (walk v s)]
-;;     (cond
-;;       (lvar? v) v
-
-;;       (list? v)
-;;       (cons (walk* (car v) s) (walk* (cdr v) s))
-
-;;       :else v)))
 (defn walk* [v1 s]
   (let [v (walk v1 s)]
     (cond
@@ -93,21 +45,14 @@
 
      [True v])))
 
-;; (defn reify-1st [[s c]]
-;;   (walk* (lvar 0) s))
 (defn reify-1st [[s c]]
   (walk* (var 0) s))
 
-;; (defn run [n g]
-;;   (map reify-1st (take n (callgoal g))))
-;;
 ;; (cmap reify-1st (ptake 5 (callgoal (fresh [q a b] (== q (clist a b)) (appendo a b (clist 1 2 3 4 5))))))
 ;;
 (defn run [n g]
   (cmap reify-1st (ptake n (callgoal g))))
 
-;; (defmacro conde [& gs]
-;;   `(disj+ ~@(map (fn [l] `(conj+ ~@l)) gs)))
 (defmacro conde [&rest gs]
   `(disj+ ~@(cmap (fn [l] `(conj+ ~@l)) gs)))
 
@@ -118,22 +63,6 @@
           (== (ccons a d) l)
           (== (ccons a res) out)
           (appendo d r res))))
-
-;; (defn appendo [l r out]
-;;   (disj+
-;;    (conj+ (== l nil) (== r out))
-;;    (fresh [a d rest]
-;;           (== (ccons a d) l)
-;;           (== (ccons a res) out)
-;;           (appendo d r res))))
-
-;; (defn appendo [l r out]
-;;   (conde
-;;    ((== nil l) (== r out))
-;;    ((fresh [a d res]
-;;       (== (ccons a d) l)
-;;       (== (ccons a res) out)
-;;       (appendo d r res)))))
 
 ;; (run 1 (fresh [q] (appendo (clist 1 2) (clist 3 4) q)))
 ;; (ptake 1 (callgoal (fresh [q] (appendo (clist 1 2) (clist 3 4) q))))
