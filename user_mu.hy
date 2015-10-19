@@ -87,9 +87,9 @@
     (cond
      [(var? v) v]
      
-     [(clist? v)
-      (ccons (walk* (ccar v) s)
-             (walk* (ccdr v) s))]
+     [(pair? v)
+      (cons (walk* (ccar v) s)
+            (walk* (ccdr v) s))]
 
      [True v])))
 
@@ -189,7 +189,8 @@
 ;;            pset([10]): (pset([12]) pset([13])),
 ;;            pset([1]): (pset([3]) pset([4]))}), 15])
 
-
+;; (run 5 (fresh [q a b] (== q (clist a b)) (appendo a b (clist 1 2 3 4 5))))
+;; => (('None' 1 2 3 4 . 5) ((1) 2 3 4 . 5) ((1 2) 3 4 . 5) ((1 2 3) 4 . 5) ((1 2 3 4) . 5))
 
 
 

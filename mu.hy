@@ -54,7 +54,9 @@
 
 (defn cmap [f c]
   (cond
-   [(nil? (ccdr c))
+   [(nil? c) nil]
+   [(and (clist? c)
+         (nil? (ccdr c)))
     (clist (f (ccar c)))]
    
    [(clist? (ccdr c))
@@ -89,6 +91,12 @@
   "Test for a atomic value, not a list, and not nil"
   (and (not (clist? x))
        (not (nil? x))))
+
+(defn pair? [c]
+  "Is this a proper pair"
+  (and (clist? c)
+       (or (atom? (ccdr c))
+           (clist? (ccdr c)))))
 
 (defn clen [c]
   (cond
