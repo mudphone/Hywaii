@@ -92,11 +92,17 @@
   (and (not (clist? x))
        (not (nil? x))))
 
+;; (defn pair? [c]
+;;   "Is this a proper pair"
+;;   (and (clist? c)
+;;        (or (atom? (ccdr c))
+;;            (clist? (ccdr c)))))
+
 (defn pair? [c]
   "Is this a proper pair"
   (and (clist? c)
-       (or (atom? (ccdr c))
-           (clist? (ccdr c)))))
+       (= (clen c) 2)
+       (atom? (ccdr c))))
 
 (defn clen [c]
   (cond

@@ -23,9 +23,9 @@
     `(conj (zzz ~(car gs)) (conj+ ~@(cdr gs)))))
 
 (defmacro disj+ [g0 &rest gs]
-  (if (seq? gs)
-    `(disj (zzz ~g0) (disj+ ~@gs))
-    `(zzz ~g0)))
+  (if (> (len gs) 0)
+    `(zzz ~g0)
+    `(disj (zzz ~g0) (disj+ ~@gs))))
 
 (defmacro fresh [vars &rest body]
   (if (empty? vars)
@@ -39,7 +39,9 @@
     (cond
      [(var? v) v]
      
-     [(pair? v)
+     [(and (pair? v)
+           (or (var? (ccar v))
+               (var? (ccdr v))))
       (cons (walk* (ccar v) s)
             (walk* (ccdr v) s))]
 
