@@ -11,86 +11,64 @@
 ;; EuroClojure, Barcelona, Spain, 25 June 2015.
 ;; https://www.youtube.com/watch?v=2e8VFSSNORg
 
-;; Cons
-(defclass Cons []
-  [a nil
-   d nil]
-  (defn --init-- [self a &optional [d nil]]
-    ;; (if (nil? a) (raise (ValueError "Cannot store nil (list terminating) value")))
-    
-    (setv self.a (if (nil? a) 'None a))
-    (setv self.d d))
-  (defn car [self] self.a)
-  (defn cdr [self] self.d)
-  (defn str-items [self]
-    (let [items (if (nil? self.d)
-                  [self.a]
-                  [self.a self.d])
-          s (.join " " (list
-                        (map (fn [x]
-                               (cond [(nil? x) "nil"]
-                                     [(instance? Cons x) (.str-items x)]
-                                     [True (.__str__ x)]))
-                             items)))]
-      s))
-  (defn --repr-- [self]
-    (let [items (.str-items self)]
-      (.join "" ["(" items ")"])))
-  (defn --eq-- [self other]
-    (and (= (type self) (type other))
-         (= (.car self) (.car other))
-         (= (.cdr self) (.cdr other))))
-  (defn --ne-- [self other]
-    (not (.--eq-- self other))))
-
 (defn ccons [a d]
-  (clist a d))
+  (if (list? d)
+    (cons a d)
+    (cons a [d])))
 
-(defn ccar [c]
-  (.car c))
-
-(defn ccdr [c]
-  (.cdr c))
-
-(defn cmap [f c]
-  (cond
-   [(nil? c) nil]
-   [(and (clist? c)
-         (nil? (ccdr c)))
-    (clist (f (ccar c)))]
+;; (defn cmap [f c]
+;;   (cond
+;;    [(nil? c) nil]
+;;    [(and (clist? c)
+;;          (nil? (ccdr c)))
+;;     (clist (f (ccar c)))]
    
-   [(clist? (ccdr c))
-    (ccons (f (ccar c)) (cmap f (ccdr c)))]
+;;    [(clist? (ccdr c))
+;;     (ccons (f (ccar c)) (cmap f (ccdr c)))]
 
-   [True (clist (f (ccar c)) (f (ccdr c)))]))
+;;    [True (clist (f (ccar c)) (f (ccdr c)))]))
 
+;; (defn to-cons-list [xs]
+;;   "Creates a list of cons cells from a normal list"
+;;   (cond
+;;    [(empty? xs) nil]
+;;    [(= (len xs) 2) (Cons (first xs) (second xs))]
+;;    [True (Cons (first xs) (to-cons-list (list (rest xs))))]))
 
-(defn to-cons-list [xs]
-  "Creates a list of cons cells from a normal list"
-  (cond
-   [(empty? xs) nil]
-   [(= (len xs) 1) (Cons (first xs))]
-   [(= (len xs) 2) (Cons (first xs) (second xs))]
-   [True (Cons (first xs) (to-cons-list (list (rest xs))))]))
-
-(defn clist [&rest xs]
-  "Creates a list of cons cells from given args"
-  (to-cons-list (list xs)))
+;; (defn clist [&rest xs]
+;;   "Creates a list of cons cells from given args"
+;;   (to-cons-list (list xs)))
 
 (defn list? [x]
   "Checks if this is a normal list"
   (instance? list x))
 
+(defn seq? [x]
+  "Checks for non-empty list"
+  (and (list? x)
+       (not (empty? x))))
+
 ;; Have to check for normal lists too, because the Hy `cons`
 ;; creates a normal list then cons-ing something to nil.
-(defn clist? [x]
-  "Checks if this is a list of cons cells or a non-empty normal list"
-  (instance? Cons x))
+;; (defn clist? [x]
+;;   "Checks if this is a list of cons cells or a non-empty normal list"
+;;   (instance? Cons x))
 
 (defn atom? [x]
   "Test for a atomic value, not a list, and not nil"
-  (and (not (clist? x))
+  (and (not (cons? x))
+       (not (list? x))
        (not (nil? x))))
+
+(defn ccdr [c]
+  (if (and (list? c)
+           (= (len c) 2))
+    (car (cdr c))
+    (cdr c)))
+
+(defn null? [c]
+  (and (list? c)
+       (empty? c)))
 
 ;; (defn pair? [c]
 ;;   "Is this a proper pair"
@@ -98,17 +76,17 @@
 ;;        (or (atom? (ccdr c))
 ;;            (clist? (ccdr c)))))
 
-(defn pair? [c]
-  "Is this a proper pair"
-  (and (clist? c)
-       (= (clen c) 2)
-       (atom? (ccdr c))))
+;; (defn pair? [c]
+;;   "Is this a proper pair"
+;;   (and (clist? c)
+;;        (= (clen c) 2)
+;;        (atom? (ccdr c))))
 
-(defn clen [c]
-  (cond
-   [(nil? c) 0]
-   [(clist? c) (inc (clen (ccdr c)))]
-   [True 1]))
+;; (defn clen [c]
+;;   (cond
+;;    [(nil? c) 0]
+;;    [(clist? c) (inc (clen (ccdr c)))]
+;;    [True 1]))
 
 (defn fn? [f]
   "Tests for a function"
@@ -171,16 +149,16 @@
 ;; (unify 1337 1338 (pmap {}))
 ;; => False
 ;;
-;; (unify (clist 1 2 3) (clist 1 2 3) (pmap {}))
+;; (unify [1 2 3] [1 2 3] (pmap {}))
 ;; => pmap({})
 ;;
-;; (unify (clist 1 2 3) (clist 1 2 4) (pmap {}))
+;; (unify [1 2 3] [1 2 4] (pmap {}))
 ;; => False
 ;;
-;; (unify (clist 1 2 3) (clist 1 2 3 4) (pmap {}))
+;; (unify [1 2 3] [1 2 3 4] (pmap {}))
 ;; => False
 ;;
-;; (unify (clist 1 2 3) (clist 1 2 (var 0)) (pmap {}))
+;; (unify [1 2 3] [1 2 (var 0)] (pmap {}))
 ;; => pmap({pset([0]): 3})
 ;;
 (defn unify [u1 v1 s1]
@@ -189,9 +167,9 @@
 
    - If two terms walk to the same variable the state map is returned.
    - When one of the terms walks to a variable, the state is extended.
-   - If both walk to clists, the cars and then cdrs are are unified
-   recursively.
-   - Non-variable, non-clists unify if they are equal.
+   - If both walk to non-empty lists, the cars and then cdrs are are 
+     unified recursively.
+   - Non-variable, non-seqs unify if they are equal.
    - Otherwise unification fails and returns False."
   (let [u (walk u1 s1)
         v (walk v1 s1)
@@ -202,15 +180,15 @@
      [(var? u) (stor-assoc s u v)]
      [(var? v) (stor-assoc s v u)]
 
-     [(and (clist? u) (clist? v))
-      (let [s2 (unify (ccar u) (ccar v) s)]
+     [(and (seq? u) (seq? v))
+      (let [s2 (unify (car u) (car v) s)]
         (and (coll? s2)
-             (unify (ccdr u) (ccdr v) s2)))]
+             (unify (cdr u) (cdr v) s2)))]
      
      [True (and (= u v) s)])))
 
 ;; empty result
-(def mzero nil)
+(def mzero [])
 
 (defn unit [sc]
   "Lifts state into a stream"
@@ -242,34 +220,29 @@
 
 ;; "or" and "and" | "and" and "or"
 
-;; (mplus (clist 1 2) (clist 3 4))
+;; (mplus [1 2] [3 4])
 ;; => (1 2 3 . 4)
 ;;
 (defn mplus [$1 $2]
   "Merges streams and applies some trampolining to avoid the depth
    first search that would be unfun for infinite streams"
   (cond
-   [(fn? $1) (fn [] (mplus $2 ($1)))]
-
-   [(atom? $1) (ccons $1 $2)]
-   [(clist? $1)
-    (ccons (ccar $1) (mplus (ccdr $1) $2))]
+   [(null? $1) $2]
    
-   [True $2]))
+   [(fn? $1) (fn [] (mplus ($1) $2))]
+   
+   [True (ccons (car $1) (mplus $2 (ccdr $1)))]))
 
 (defn bind [$ g]
   "Invokes a goal on each element of a stream and then either
    merges the results, or if results exhausted returns the empty
    stream"
   (cond
+   [(null? $) mzero]
+   
    [(fn? $) (fn [] (bind ($) g))]
 
-   [(atom? $)
-    (mplus (g $) mzero)]
-   [(clist? $)
-    (mplus (g (ccar $)) (bind (ccdr $) g))]
-
-   [True mzero]))
+   [True (mplus (g (car $)) (bind (cdr $) g))]))
 
 ;; ((callfresh (fn [q] (disj (== q 1) (== q 2)))) empty-state)
 ;; => ([pmap({pset([0]): 1}), 1] [pmap({pset([0]): 2}), 1])
@@ -320,10 +293,10 @@
 (defn ptake [n $1]
   "Invokes pull a given number of times to return the desired number
    of results from a stream"
-  (if (zero? n) nil
+  (if (zero? n) []
       (let [$ (pull $1)]
-        (if (nil? $) nil
-            (ccons (ccar $)
+        (if (null? $) []
+            (ccons (car $)
                    (ptake (dec n) (ccdr $)))))))
 
 ;; (ptake 10 (callgoal fives-and-sixes))
