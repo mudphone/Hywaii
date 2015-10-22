@@ -54,11 +54,11 @@
 ;;   "Checks if this is a list of cons cells or a non-empty normal list"
 ;;   (instance? Cons x))
 
-(defn atom? [x]
-  "Test for a atomic value, not a list, and not nil"
-  (and (not (cons? x))
-       (not (list? x))
-       (not (nil? x))))
+;; (defn atom? [x]
+;;   "Test for a atomic value, not a list, and not nil"
+;;   (and (not (cons? x))
+;;        (not (list? x))
+;;        (not (nil? x))))
 
 (defn ccdr [c]
   (if (and (list? c)
@@ -228,10 +228,13 @@
    first search that would be unfun for infinite streams"
   (cond
    [(null? $1) $2]
-   
+
+   [(and (list? $1)
+         (= (len $1) 1)
+         (fn? (car $1))) (fn [] (mplus ((car $1)) $2))]
    [(fn? $1) (fn [] (mplus ($1) $2))]
    
-   [True (ccons (car $1) (mplus $2 (ccdr $1)))]))
+   [True (ccons (car $1) (mplus $2 (cdr $1)))]))
 
 (defn bind [$ g]
   "Invokes a goal on each element of a stream and then either
