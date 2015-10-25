@@ -1,10 +1,10 @@
 (import [mu [*]])
 
-(defn seq? [x]
-  (or (and (clist? x)
-           (> (clen x) 0))
-      (and (list? x)
-           (not (empty? x)))))
+;; (defn seq? [x]
+;;   (or (and (clist? x)
+;;            (> (clen x) 0))
+;;       (and (list? x)
+;;            (not (empty? x)))))
 
 (defmacro/g! zzz [g]
   "The snooze macro"
@@ -20,7 +20,7 @@
 (defmacro conj+ [&rest gs]
   (if (= (len gs) 1)
     `(zzz ~(car gs))
-    `(conj (zzz ~(car gs)) (conj+ ~@(cdr gs)))))
+    `(conj (zzz ~(car gs)) (conj+ ~@(ccdr gs)))))
 
 (defmacro disj+ [g0 &rest gs]
   (if (> (len gs) 0)
@@ -34,46 +34,48 @@
       (fn [~(car vars)]
         (fresh ~(cdr vars) ~@body)))))
 
+      ;; (and (seq? v)
+      ;;      (or (var? (car v))
+      ;;          (var? (ccdr v))))
+
 (defn walk* [v1 s]
   (let [v (walk v1 s)]
     (cond
      [(var? v) v]
      
-     [(and (pair? v)
-           (or (var? (ccar v))
-               (var? (ccdr v))))
-      (cons (walk* (ccar v) s)
-            (walk* (ccdr v) s))]
+     [(seq? v)
+      (cons (walk* (car v) s)
+            (walk* (cdr v) s))]
 
      [True v])))
 
 (defn reify-1st [[s c]]
   (walk* (var 0) s))
 
-;; (cmap reify-1st (ptake 5 (callgoal (fresh [q a b] (== q (clist a b)) (appendo a b (clist 1 2 3 4 5))))))
-;;
+;; (list (map reify-1st (ptake 5 (callgoal (fresh [q a b] (== q [a b]) (appendo a b [1 2 3 4 5]))))))
+;; (ptake 5 (callgoal (fresh [q a b] (== q [a b]) (appendo a b [1 2 3 4 5]))))
 (defn run [n g]
-  (cmap reify-1st (ptake n (callgoal g))))
+  (list (map reify-1st (ptake n (callgoal g)))))
 
 (defmacro conde [&rest gs]
-  `(disj+ ~@(cmap (fn [l] `(conj+ ~@l)) gs)))
+  `(disj+ ~@(list (map (fn [l] `(conj+ ~@l)) gs))))
 
 (defn appendo [l r out]
   (disj
-   (conj (== l nil) (== r out))
+   (conj (== l []) (== r out))
    (fresh [a d res]
-          (== (ccons a d) l)
-          (== (ccons a res) out)
+          (== (cons a [d]) l)
+          (== (cons a [res]) out)
           (appendo d r res))))
 
-;; (run 1 (fresh [q] (appendo (clist 1 2) (clist 3 4) q)))
-;; (ptake 1 (callgoal (fresh [q] (appendo (clist 1 2) (clist 3 4) q))))
+;; (run 1 (fresh [q] (appendo [1 2] [3 4] q)))
+;; (ptake 1 (callgoal (fresh [q] (appendo [1 2] [3 4] q))))
 ;; => ([pmap({pset([2]): 2, pset([1]): 1}), 4])
 
-;; (ptake 1 (callgoal (fresh [q a b] (== q (clist a b)) (appendo a b (clist 1 2 3 4 5)))))
+;; (ptake 1 (callgoal (fresh [q a b] (== q [a b]) (appendo a b [1 2 3 4 5]))))
 ;; => ([pmap({pset([2]): (1 2 3 4 5), pset([1]): None, pset([0]): (pset([1]) pset([2]))}), 3])
 ;;
-;; (ptake 5 (callgoal (fresh [q a b] (== q (clist a b)) (appendo a b (clist 1 2 3 4 5)))))
+;; (ptake 5 (callgoal (fresh [q a b] (== q [a b]) (appendo a b [1 2 3 4 5]))))
 ;; => ([pmap({pset([2]): (1 2 3 4 5),
 ;;            pset([1]): None,
 ;;            pset([0]): (pset([1]) pset([2]))}), 3]
@@ -120,7 +122,7 @@
 ;;            pset([10]): (pset([12]) pset([13])),
 ;;            pset([1]): (pset([3]) pset([4]))}), 15])
 
-;; (run 5 (fresh [q a b] (== q (clist a b)) (appendo a b (clist 1 2 3 4 5))))
+;; (run 5 (fresh [q a b] (== q [a b]) (appendo a b [1 2 3 4 5])))
 ;; => (('None' 1 2 3 4 . 5) ((1) 2 3 4 . 5) ((1 2) 3 4 . 5) ((1 2 3) 4 . 5) ((1 2 3 4) . 5))
 
 
@@ -137,4 +139,4 @@
 ;;
 ;; (ptake 1 (callgoal (appendo (clist 'a) (clist 'b) (clist 'a 'b))))
 ;; 
-;; (def ground-appendo (appendo (clist 'a) (clist 'b) (clist 'a 'b)))
+;; (def ground-appendo (appendo ['a] ['b] ['a 'b]))
