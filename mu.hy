@@ -11,34 +11,6 @@
 ;; EuroClojure, Barcelona, Spain, 25 June 2015.
 ;; https://www.youtube.com/watch?v=2e8VFSSNORg
 
-(defn ccons [a d]
-  (if (list? d)
-    (cons a d)
-    (cons a [d])))
-
-;; (defn cmap [f c]
-;;   (cond
-;;    [(nil? c) nil]
-;;    [(and (clist? c)
-;;          (nil? (ccdr c)))
-;;     (clist (f (ccar c)))]
-   
-;;    [(clist? (ccdr c))
-;;     (ccons (f (ccar c)) (cmap f (ccdr c)))]
-
-;;    [True (clist (f (ccar c)) (f (ccdr c)))]))
-
-;; (defn to-cons-list [xs]
-;;   "Creates a list of cons cells from a normal list"
-;;   (cond
-;;    [(empty? xs) nil]
-;;    [(= (len xs) 2) (Cons (first xs) (second xs))]
-;;    [True (Cons (first xs) (to-cons-list (list (rest xs))))]))
-
-;; (defn clist [&rest xs]
-;;   "Creates a list of cons cells from given args"
-;;   (to-cons-list (list xs)))
-
 (defn list? [x]
   "Checks if this is a normal list"
   (instance? list x))
@@ -48,45 +20,14 @@
   (and (list? x)
        (not (empty? x))))
 
-;; Have to check for normal lists too, because the Hy `cons`
-;; creates a normal list then cons-ing something to nil.
-;; (defn clist? [x]
-;;   "Checks if this is a list of cons cells or a non-empty normal list"
-;;   (instance? Cons x))
-
-;; (defn atom? [x]
-;;   "Test for a atomic value, not a list, and not nil"
-;;   (and (not (cons? x))
-;;        (not (list? x))
-;;        (not (nil? x))))
-
-(defn ccdr [c]
-  (if (and (list? c)
-           (= (len c) 2))
-    (car (cdr c))
-    (cdr c)))
-
 (defn null? [c]
-  (and (list? c)
-       (empty? c)))
+  (or (nil? c)
+      (and (list? c)
+           (empty? c))))
 
-;; (defn pair? [c]
-;;   "Is this a proper pair"
-;;   (and (clist? c)
-;;        (or (atom? (ccdr c))
-;;            (clist? (ccdr c)))))
-
-;; (defn pair? [c]
-;;   "Is this a proper pair"
-;;   (and (clist? c)
-;;        (= (clen c) 2)
-;;        (atom? (ccdr c))))
-
-;; (defn clen [c]
-;;   (cond
-;;    [(nil? c) 0]
-;;    [(clist? c) (inc (clen (ccdr c)))]
-;;    [True 1]))
+(defn pair? [c]
+  (or (seq? c)
+      (cons? c)))
 
 (defn fn? [f]
   "Tests for a function"
@@ -180,7 +121,7 @@
      [(var? u) (stor-assoc s u v)]
      [(var? v) (stor-assoc s v u)]
 
-     [(and (seq? u) (seq? v))
+     [(and (pair? u) (pair? v))
       (let [s2 (unify (car u) (car v) s)]
         (and (coll? s2)
              (unify (cdr u) (cdr v) s2)))]
@@ -188,11 +129,11 @@
      [True (and (= u v) s)])))
 
 ;; empty result
-(def mzero [])
+(def mzero nil)
 
 (defn unit [sc]
   "Lifts state into a stream"
-  (ccons sc mzero))
+  (cons sc mzero))
 
 ;; ==
 ;;
@@ -229,12 +170,12 @@
   (cond
    [(null? $1) $2]
 
-   [(and (list? $1)
-         (= (len $1) 1)
-         (fn? (car $1))) (fn [] (mplus ((car $1)) $2))]
+   ;; [(and (list? $1)
+   ;;       (= (len $1) 1)
+   ;;       (fn? (car $1))) (fn [] (mplus ((car $1)) $2))]
    [(fn? $1) (fn [] (mplus ($1) $2))]
    
-   [True (ccons (car $1) (mplus $2 (cdr $1)))]))
+   [True (cons (car $1) (mplus $2 (cdr $1)))]))
 
 (defn bind [$ g]
   "Invokes a goal on each element of a stream and then either
@@ -299,8 +240,8 @@
   (if (zero? n) []
       (let [$ (pull $1)]
         (if (null? $) []
-            (ccons (car $)
-                   (ptake (dec n) (ccdr $)))))))
+            (cons (car $)
+                  (ptake (dec n) (cdr $)))))))
 
 ;; (ptake 10 (callgoal fives-and-sixes))
 ;; => ([pmap({pset([0]): 5}), 1] [pmap({pset([0]): 6}), 1] ...
