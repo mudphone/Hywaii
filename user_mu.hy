@@ -1,11 +1,5 @@
 (import [mu [*]])
 
-;; (defn seq? [x]
-;;   (or (and (clist? x)
-;;            (> (clen x) 0))
-;;       (and (list? x)
-;;            (not (empty? x)))))
-
 (defmacro/g! zzz [g]
   "The snooze macro"
   `(fn [g!sc] (fn [] (~g g!sc))))
@@ -20,7 +14,7 @@
 (defmacro conj+ [&rest gs]
   (if (= (len gs) 1)
     `(zzz ~(car gs))
-    `(conj (zzz ~(car gs)) (conj+ ~@(ccdr gs)))))
+    `(conj (zzz ~(car gs)) (conj+ ~@(cdr gs)))))
 
 (defmacro disj+ [g0 &rest gs]
   (if (> (len gs) 0)
@@ -34,16 +28,12 @@
       (fn [~(car vars)]
         (fresh ~(cdr vars) ~@body)))))
 
-      ;; (and (seq? v)
-      ;;      (or (var? (car v))
-      ;;          (var? (ccdr v))))
-
 (defn walk* [v1 s]
   (let [v (walk v1 s)]
     (cond
      [(var? v) v]
      
-     [(seq? v)
+     [(pair? v)
       (cons (walk* (car v) s)
             (walk* (cdr v) s))]
 
@@ -60,13 +50,22 @@
 (defmacro conde [&rest gs]
   `(disj+ ~@(list (map (fn [l] `(conj+ ~@l)) gs))))
 
+;; (defn appendo [l r out]
+;;   (disj
+;;    (conj (== l nil) (== r out))
+;;    (fresh [a d res]
+;;           (== (cons a [d]) l)
+;;           (== (cons a [res]) out)
+;;           (appendo d r res))))
+
 (defn appendo [l r out]
   (disj
    (conj (== l []) (== r out))
    (fresh [a d res]
-          (== (cons a [d]) l)
-          (== (cons a [res]) out)
+          (== (cons a d) l)
+          (== (cons a res) out)
           (appendo d r res))))
+
 
 ;; (run 1 (fresh [q] (appendo [1 2] [3 4] q)))
 ;; (ptake 1 (callgoal (fresh [q] (appendo [1 2] [3 4] q))))
