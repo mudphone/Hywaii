@@ -170,9 +170,6 @@
   (cond
    [(null? $1) $2]
 
-   ;; [(and (list? $1)
-   ;;       (= (len $1) 1)
-   ;;       (fn? (car $1))) (fn [] (mplus ((car $1)) $2))]
    [(fn? $1) (fn [] (mplus ($1) $2))]
    
    [True (cons (car $1) (mplus $2 (cdr $1)))]))
