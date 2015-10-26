@@ -43,3 +43,24 @@
         state (car $)
         v0 (walk (var 0) (car state))]
     (assert (= v0 [2]))))
+
+(defn test-nullo []
+  (let [$ (ptake 1 (callgoal (fresh [q] (nullo q))))
+        state (car $)
+        v0 (walk (var 0) (car state))]
+    (assert (= v0 []))))
+
+(defn test-nullo-empty []
+  (let [$ (ptake 1 (callgoal (fresh [q]
+                                    (nullo [1 2 3])
+                                    (== True q))))]
+    (assert (= $ []))))
+
+(defn test-nullo-true []
+  (let [$ (ptake 1 (callgoal (fresh [q]
+                                    (nullo [])
+                                    (== True q))))
+        state (car $)
+        v0 (walk (var 0) (car state))]
+    (assert (and (instance? bool v0)
+                 v0))))

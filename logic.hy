@@ -11,3 +11,6 @@
 
 (defn conso [a d p]
   (== (cons a d) p))
+
+(defn nullo [x]
+  (== [] x))
