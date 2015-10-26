@@ -18,8 +18,8 @@
 
 (defmacro disj+ [g0 &rest gs]
   (if (> (len gs) 0)
-    `(zzz ~g0)
-    `(disj (zzz ~g0) (disj+ ~@gs))))
+    `(disj (zzz ~g0) (disj+ ~@gs))
+    `(zzz ~g0)))
 
 (defmacro fresh [vars &rest body]
   (if (empty? vars)
@@ -65,8 +65,13 @@
   "See also `run`, this one provides all solutions"
   (list (map reify-1st (take-all (callgoal g)))))
 
-;; (defmacro conde [&rest gs]
-;;   `(disj+ ~@(list (map (fn [l] `(conj+ ~@l)) gs))))
+;; (take-all (callgoal (fresh [q] (conde [(== q 5)] [(== q 6)]))))
+;; => [[pmap({pset([0]): 5}) 1], [pmap({pset([0]): 6}) 1]]
+;;
+;; (run* (fresh [q] (conde [(== q 5)] [(== q 6)])))
+;; => [5, 6]
+(defmacro conde [&rest gs]
+  `(disj+ ~@(list (map (fn [l] `(conj+ ~@l)) gs))))
 
 (defn appendo [l r out]
   (disj
