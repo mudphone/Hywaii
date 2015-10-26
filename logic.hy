@@ -8,3 +8,6 @@
 (defn cdro [p d]
   (fresh [a]
          (== (cons a d) p)))
+
+(defn conso [a d p]
+  (== (cons a d) p))
