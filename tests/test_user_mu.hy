@@ -39,4 +39,20 @@
     (assert (= (nth $ 4) [[1 2 3 4] [5]]))
     (assert (= (nth $ 5) [[1 2 3 4 5] []]))))
 
+(defn test-appendo/e []
+  (assert (= (run 1 (fresh [q] (appendo/e [1 2] [3 4] q)))
+             [[1 2 3 4]])))
+
+(defn test-appendo/e-two-lists []
+  (let [$ (run 6 (fresh [q a b]
+                        (== q [a b])
+                        (appendo/e a b [1 2 3 4 5])))]
+    (assert (= (len $) 6))
+    (assert (= (nth $ 0) [[] [1 2 3 4 5]]))
+    (assert (= (nth $ 1) [[1] [2 3 4 5]]))
+    (assert (= (nth $ 2) [[1 2] [3 4 5]]))
+    (assert (= (nth $ 3) [[1 2 3] [4 5]]))
+    (assert (= (nth $ 4) [[1 2 3 4] [5]]))
+    (assert (= (nth $ 5) [[1 2 3 4 5] []]))))
+
 

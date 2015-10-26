@@ -64,3 +64,20 @@
         v0 (walk (var 0) (car s/c))]
     (assert (and (instance? bool v0)
                  v0))))
+
+(defn test-appendo/l []
+  (assert (= (run 1 (fresh [q] (appendo/l [1 2] [3 4] q)))
+             [[1 2 3 4]])))
+
+(defn test-appendo/l-two-lists []
+  (let [$ (run 6 (fresh [q a b]
+                        (== q [a b])
+                        (appendo/l a b [1 2 3 4 5])))]
+    (assert (= (len $) 6))
+    (assert (= (nth $ 0) [[] [1 2 3 4 5]]))
+    (assert (= (nth $ 1) [[1] [2 3 4 5]]))
+    (assert (= (nth $ 2) [[1 2] [3 4 5]]))
+    (assert (= (nth $ 3) [[1 2 3] [4 5]]))
+    (assert (= (nth $ 4) [[1 2 3 4] [5]]))
+    (assert (= (nth $ 5) [[1 2 3 4 5] []]))))
+
