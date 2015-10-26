@@ -50,14 +50,6 @@
 (defmacro conde [&rest gs]
   `(disj+ ~@(list (map (fn [l] `(conj+ ~@l)) gs))))
 
-;; (defn appendo [l r out]
-;;   (disj
-;;    (conj (== l nil) (== r out))
-;;    (fresh [a d res]
-;;           (== (cons a [d]) l)
-;;           (== (cons a [res]) out)
-;;           (appendo d r res))))
-
 (defn appendo [l r out]
   (disj
    (conj (== l []) (== r out))
@@ -65,7 +57,6 @@
           (== (cons a d) l)
           (== (cons a res) out)
           (appendo d r res))))
-
 
 ;; (run 1 (fresh [q] (appendo [1 2] [3 4] q)))
 ;; (ptake 1 (callgoal (fresh [q] (appendo [1 2] [3 4] q))))
