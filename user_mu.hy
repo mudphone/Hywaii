@@ -70,6 +70,7 @@
 ;;
 ;; (run* (fresh [q] (conde [(== q 5)] [(== q 6)])))
 ;; => [5, 6]
+;;
 (defmacro conde [&rest gs]
   `(disj+ ~@(list (map (fn [l] `(conj+ ~@l)) gs))))
 
