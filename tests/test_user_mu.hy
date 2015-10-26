@@ -15,13 +15,28 @@
                                       [(== q 5)]
                                       [(== q 6)]))))
         s/c0 (nth $ 0)
-        s/c1 (nth $ 1)]
-    (assert (= (walk (var 0) (car s/c0)) 5))
-    (assert (= (walk (var 0) (car s/c1)) 6))))
+        s/c1 (nth $ 1)
+        v0 (walk (var 0) (car s/c0))
+        v1 (walk (var 0) (car s/c1))
+        results [v0 v1]]
+    (assert (= (len $) 2))
+    (assert (= (len (list (filter (fn [x] (= x 5)) results)))
+               1)) ;; Result order doesn't matter
+    (assert (= (len (list (filter (fn [x] (= x 6)) results)))
+               1))))
 
 (defn test-conde-run []
-  (let [$ (run* (fresh [q] (conde [(== q 5)] [(== q 6)])))]
-    (assert (= $ [5 6]))))
+  (let [$ (run* (fresh [q] (conde [(== q 5)]
+                                  [(== q 6)])))]
+    (assert (= (len $) 2))
+    (assert (some (fn [x] (= x 5)) $)) ;; Result order doesn't matter
+    (assert (some (fn [x] (= x 6)) $))))
+
+(defn test-conde-run-3 []
+  (let [$ (run* (fresh [q] (conde [(== q 5)]
+                                  [(== q 6)]
+                                  [(== q 7)])))]
+    (assert (= (len $) 3))))
 
 (defn test-appendo []
   (assert (= (run 1 (fresh [q] (appendo [1 2] [3 4] q)))
