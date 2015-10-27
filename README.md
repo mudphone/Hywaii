@@ -2,7 +2,7 @@
 
 This is my attempt at implementing μKanren in [Hy].
 
-All credit for [μKanren to Jason Hemann and Daniel P. Friedman (clearly explained in their paper)][muKanren paper], and for [miniKanren] to Daniel P. Friedman, William E. Byrd and Oleg Kiselyov (see their book [The Reasoned Schemer]).
+All credit for μKanren to Jason Hemann and Daniel P. Friedman [(clearly explained in their paper)][muKanren paper], and for [miniKanren] to Daniel P. Friedman, William E. Byrd and Oleg Kiselyov (see their book [The Reasoned Schemer]).
 
 Much appreciation to Bodil Stokke for explaining things clearly in her talk:
 [μKanren: Running the Little Things Backwards, EuroClojure, Barcelona, Spain, 25 June 2015][talk at EuroClojure].
