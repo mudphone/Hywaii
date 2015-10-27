@@ -9,6 +9,12 @@
     (assert (= (last state) 1))
     (assert (fn? (cdr $)))))
 
+(defn test-fresh []
+  (assert (= (run* (fresh [q] (== q 5))) [5]))
+  (assert (= (run* (fresh [q] (== 5 q))) [5]))
+  (assert (= (run* (fresh [q x] (== q x) (== x 6))) [6]))
+  (assert (= (run* (fresh [q x] (== x q) (== 6 x))) [6])))
+
 (defn test-conde []
   (let [$ (take-all (callgoal (fresh [q]
                                      (conde
@@ -37,6 +43,14 @@
                                   [(== q 6)]
                                   [(== q 7)])))]
     (assert (= (len $) 3))))
+
+(defn test-conde-run-and-or []
+  (let [$ (run* (fresh [q x] (conde [(== q x)
+                                     (== x 5)]
+                                    [(== q 6)])))]
+    (assert (= (len $) 2))
+    (assert (some (fn [x] (= x 5)) $)) ;; Result order doesn't matter
+    (assert (some (fn [x] (= x 6)) $))))
 
 (defn test-appendo []
   (assert (= (run 1 (fresh [q] (appendo [1 2] [3 4] q)))

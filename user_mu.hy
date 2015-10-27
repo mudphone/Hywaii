@@ -21,7 +21,12 @@
     `(disj (zzz ~g0) (disj+ ~@gs))
     `(zzz ~g0)))
 
+;; (run* (fresh [q x y] (== [x 5 y] q) (== [x y] [4 6])))
+;; => [[4, 5, 6]]
+;;
+;; `fresh` is like *and*
 (defmacro fresh [vars &rest body]
+  "Used to declare an `and` relation"
   (if (empty? vars)
     `(conj+ ~@body)
     `(callfresh
@@ -71,7 +76,12 @@
 ;; (run* (fresh [q] (conde [(== q 5)] [(== q 6)])))
 ;; => [5, 6]
 ;;
+;; (run* (fresh [q x] (conde [(== q x) (== x 5)] [(== q 6)])))
+;; => [5, 6]
+;;
 (defmacro conde [&rest gs]
+  "Used to declare a series of `or` relations
+   Each relation (clause) can contain one or many `and` goals"
   `(disj+ ~@(list (map (fn [l] `(conj+ ~@l)) gs))))
 
 (defn appendo [l r out]
