@@ -13,6 +13,11 @@ In ["How to Become a Hacker,"][hacker-howto] Eric Raymond explains that "Lisp is
 ### Why Lisp?
 The Lisp family of languages has inspired features which have found their way into Python and many other languages. Are you interested in Lisp, but unwilling to give up your investment in Python’s vast ecosystem? With [Hy], and the magical [Python AST], you can have it all: call [Hy] from Python, and Python from [Hy], learn some Lisp, and keep the Python tools you’ve come to love. [Hy] extends your reach into Lisp’s five-decade long heritage, while remaining interoperable with Python.
 
+### Why μKanren?
+Relational programming is an interesting and declarative way to do logic programming. [miniKanren] offers a fuller feature set, and a nicer user API for solving logic problems. So, if you're really interested in building a significant system, you'll probably want to check out a [miniKanren] system. [Adderall] is a miniKanren that is implemented in [Hy].
+
+But, if you'd like to understand how all this works, μKanren is for you. It's a simplified version of miniKanren with fewer user-space bells and whistles. It's small enough that you can implement in yourself, and read through other implementations simply (the original paper has a ~70 line implementation, whereas miniKanren is ~1000 lines).
+
 ### What is this?
 This is an implementation of a relational logic programming system, μKanren, a minimalist version of [miniKanren].
 
@@ -51,3 +56,4 @@ GNU GENERAL PUBLIC LICENSE, see LICENSE file
 [miniKanren uncourse]: https://www.youtube.com/playlist?list=PLO4TbomOdn2cks2n5PvifialL8kQwt0aW
 [The Reasoned Schemer]: http://mitpress.mit.edu/books/reasoned-schemer
 [Code from The Reasoned Schemer]: https://github.com/miniKanren/TheReasonedSchemer
+[Adderall]: https://github.com/algernon/adderall
