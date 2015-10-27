@@ -32,7 +32,7 @@ Helped me understand how to use relational programming:
 * [Code from The Reasoned Schemer]
 
 Helped me understand how it works:
-* [Bodil Stokke's Clojure implementation] of μKanren
+* [Bodil Stokke’s Clojure implementation] of μKanren
 * The [muKanren paper], by Jason Hemann and Daniel P. Friedman
 * The [muKanren repo] for the paper
 
