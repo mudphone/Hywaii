@@ -20,6 +20,22 @@ I’m not an expert on any of these things, just interested in hacking on fun to
 
 This μKanren implementation in [Hy] is heavily inspired by [Bodil Stokke’s Clojure implementation] and [talk at EuroClojure] and reading ["μKanren: A Minimal Functional Core for Relational Programming," by Jason Hemann and Daniel P. Friedman][muKanren paper].
 
+### I don't understand how any of this works.
+It's kind of tough to understand what relational programming is just by reading someone's website. But there are a lot of good online resources for learning about how to use μKanren. Once you understand what it's for, you can dive into how it's built.
+
+Generally useful:
+* Everything on the [miniKanren] website
+
+Helped me understand how to use relational programming:
+* Will Byrd's [miniKanren uncourse]
+* [The Reasoned Schemer] book, by Daniel P. Friedman, William E. Byrd and Oleg Kiselyov
+* [Code from The Reasoned Schemer]
+
+Helped me understand how it works:
+* [Bodil Stokke's Clojure implementation] of μKanren
+* The [muKanren paper], by Jason Hemann and Daniel P. Friedman
+* The [muKanren repo] for the paper
+
 ### License
 GNU GENERAL PUBLIC LICENSE, see LICENSE file
 (Due to use of code from Hydiomatic)
@@ -31,3 +47,7 @@ GNU GENERAL PUBLIC LICENSE, see LICENSE file
 [Bodil Stokke’s Clojure implementation]: https://github.com/bodil/microkanrens/blob/master/mk.clj
 [talk at EuroClojure]: https://www.youtube.com/watch?v=2e8VFSSNORg
 [muKanren paper]: http://webyrd.net/scheme-2013/papers/HemannMuKanren2013.pdf
+[muKanren repo]: https://github.com/jasonhemann/microKanren
+[miniKanren uncourse]: https://www.youtube.com/playlist?list=PLO4TbomOdn2cks2n5PvifialL8kQwt0aW
+[The Reasoned Schemer]: http://mitpress.mit.edu/books/reasoned-schemer
+[Code from The Reasoned Schemer]: https://github.com/miniKanren/TheReasonedSchemer
