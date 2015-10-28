@@ -15,6 +15,15 @@
   (assert (= (run* (fresh [q x] (== q x) (== x 6))) [6]))
   (assert (= (run* (fresh [q x] (== x q) (== 6 x))) [6])))
 
+(defn test-reify-s []
+  (let [s (run*
+           (fresh [q x y]
+                  (== q [x y])
+                  (conde [(== x 5)]
+                         [(== y 6)])))]
+    (assert (= (first s)  [5 (HySymbol "_.0")]))
+    (assert (= (second s) [(HySymbol "_.0") 6]))))
+
 (defn test-conde []
   (let [$ (take-all (callgoal (fresh [q]
                                      (conde
