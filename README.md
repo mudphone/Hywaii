@@ -51,6 +51,10 @@ This style of programming has evolved over many years (about a decade just for K
 * `condi` is the same as `conde`
 * `exist` is the same as `fresh`
 
+Thanks to folks who've helped with ideas, comments and questions:
+* Kevin McCarthy (@kevin1024) - Knows everything about Python
+* @olasb on #hy - For the idea to change var into a subclass of pset, rather than a literal pset, thus allowing control of how it's printed, and use of `instance?` to check for vars (and not confuse them with literal psets)
+
 ### License
 GNU GENERAL PUBLIC LICENSE, see LICENSE file
 (Due to use of code from Hydiomatic)
