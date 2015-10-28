@@ -1,5 +1,6 @@
-(import [pyrsistent [pmap :as pmap
-                     pset :as pset]]
+(import [pyrsistent [pmap
+                     pset
+                     PSet]]
         [types])
 
 ;; This is my attempt at implementing μKanren in Hy.
@@ -35,13 +36,23 @@
 
 
 ;; Variables "are represented as vectors that hold their variable index."
-(defn var [c]
-  "Creates a logic variable"
-  (pset [c]))
+(defclass var [PSet]
+  []
+  (defn --init-- [self c]
+    (.--init-- (super))
+    (setv self._map (pmap {c True}))
+    None)
+
+  (defn --str-- [self]
+    ;; (% "_.%s" (first self))
+    (% "(var %s)" (first self)))
+  
+  (defn --repr-- [self]
+    (str self)))
 
 (defn var? [x]
   "Test if is logic var"
-  (instance? (type (var 0)) x))
+  (instance? var x))
 
 ;; State
 (defn stor [&optional [m {}]]
