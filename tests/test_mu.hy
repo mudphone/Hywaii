@@ -57,6 +57,15 @@
   (let [s (stor-assoc (stor) (var 0) 1)]
     (assert (= (stor-get s (var 0)) 1))))
 
+(defn test-stor-keys []
+  (assert (= (stor-keys (stor {1 2 3 4})) [1 3]))
+  (assert (= (stor-keys (stor)) [])))
+
+(defn test-num-stor-keys []
+  (assert (= (num-stor-keys (stor {1 2 3 4})) 2))
+  (assert (= (num-stor-keys (stor)) 0))
+  (assert (= (num-stor-keys (stor {1 2 3 4 5 6})) 3)))
+
 (defn test-empty-state []
   (assert (= empty-state [(pmap {}) 0]))
   (assert (= (last empty-state) 0)))
