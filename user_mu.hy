@@ -97,9 +97,9 @@
   (conde
    ((== [] l) (== r out))
    ((fresh [a d res]
-      (== (cons a d) l)
-      (== (cons a res) out)
-      (appendo d r res)))))
+           (== (cons a d) l)
+           (== (cons a res) out)
+           (appendo d r res)))))
 
 ;; (run 1 (fresh [q] (appendo [1 2] [3 4] q)))
 ;; => [[1, 2, 3, 4]]
