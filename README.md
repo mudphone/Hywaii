@@ -41,6 +41,12 @@ Helped me understand how it works:
 * The [muKanren paper], by Jason Hemann and Daniel P. Friedman
 * The [muKanren repo] for the paper
 
+Specific parts:
+* ==: [miniKanren uncourse #1][uncourse no1]
+* conde, fresh, run: [miniKanren uncourse #2][uncourse no2]
+Appendo: [miniKanren uncourse #3][uncourse no3]
+* 
+
 ### License
 GNU GENERAL PUBLIC LICENSE, see LICENSE file
 (Due to use of code from Hydiomatic)
@@ -57,3 +63,6 @@ GNU GENERAL PUBLIC LICENSE, see LICENSE file
 [The Reasoned Schemer]: http://mitpress.mit.edu/books/reasoned-schemer
 [Code from The Reasoned Schemer]: https://github.com/miniKanren/TheReasonedSchemer
 [Adderall]: https://github.com/algernon/adderall
+[uncourse no1]: https://www.youtube.com/watch?v=iCuVTGWNU3s
+[uncourse no2]: https://www.youtube.com/watch?v=K3QNJDalX1U
+[uncourse no3]: https://www.youtube.com/watch?v=2WQgH-QEhVw
