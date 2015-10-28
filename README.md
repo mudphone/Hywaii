@@ -44,8 +44,12 @@ Helped me understand how it works:
 Specific parts:
 * ==: [miniKanren uncourse #1][uncourse no1]
 * conde, fresh, run: [miniKanren uncourse #2][uncourse no2]
-Appendo: [miniKanren uncourse #3][uncourse no3]
-* 
+* appendo: [miniKanren uncourse #3][uncourse no3]
+
+### Other notes
+This style of programming has evolved over many years (about a decade just for Kanren). For this reason, some of the names have changed. You'll see names which are different in older papers. Here's a few things of note:
+* `condi` is the same as `conde`
+* `exist` is the same as `fresh`
 
 ### License
 GNU GENERAL PUBLIC LICENSE, see LICENSE file
