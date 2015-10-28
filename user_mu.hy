@@ -44,8 +44,27 @@
 
      [True v])))
 
+(defn reify-s [v1 s]
+  (let [v (walk v1 s)]
+    (cond
+     [(var? v)
+      (let [n (reify-name (num-stor-keys s))]
+        (stor-assoc s v n))]
+     
+     [(pair? v)
+      (reify-s (cdr v) (reify-s (car v) s))]
+
+     [True s])))
+
+(defn reify-name [n]
+  (HySymbol (+ "_." (str n))))
+
 (defn reify-1st [[s c]]
   (walk* (var 0) s))
+
+(defn reify-1st [[s c]]
+  (let [v (walk* (var 0) s)]
+    (walk* v (reify-s v empty-s))))
 
 ;; (list (map reify-1st (ptake 6 (callgoal (fresh [q a b] (== q [a b]) (appendo a b [1 2 3 4 5]))))))
 ;; => [[[], [1 2 3 4 5]], [[1], [2 3 4 5]], [[1 2], [3 4 5]], [[1 2 3], [4 5]], [[1 2 3 4], [5]], [[1 2 3 4 5], []]]

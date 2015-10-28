@@ -58,6 +58,12 @@
    map"
   (.set s k v))
 
+(defn stor-keys [s]
+  (.keys s))
+
+(defn num-stor-keys [s]
+  (len (stor-keys s)))
+
 (def empty-s (stor))
 (def empty-state [empty-s 0])
 
