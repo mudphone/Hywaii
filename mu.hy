@@ -38,13 +38,10 @@
 ;; Variables "are represented as vectors that hold their variable index."
 (defclass var [PSet]
   []
-  (defn --init-- [self c]
-    (.--init-- (super))
-    (setv self._map (pmap {c True}))
-    None)
+  (defn --new-- [self c]
+    (.--new-- (super) self (pmap {c True})))
 
   (defn --str-- [self]
-    ;; (% "_.%s" (first self))
     (% "(var %s)" (first self)))
   
   (defn --repr-- [self]
