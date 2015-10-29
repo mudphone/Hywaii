@@ -38,4 +38,11 @@
            (conso a res out)
            (appendo/l d r res)))))
 
+(defn pairo [p]
+  (fresh [a d]
+         (conso a d p)))
+
+;; (defn unwrapo [x out]
+;;   (conde
+;;    [(pairo)]))
 
