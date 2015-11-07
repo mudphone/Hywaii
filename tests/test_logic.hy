@@ -184,3 +184,29 @@
 (defn test-pairo-fresh-cons []
   (let [$ (run* (fresh [r] (pairo (cons r 'pear))))]
     (assert (= $ ['_.0]))))
+
+(defn test-unwrapo-pizza []
+  (let [$ (run* (fresh [x] (unwrapo [[['pizza]]] x)))]
+    (assert (= (len $) 4)) ;; order is not guaranteed
+    (assert (some (fn [x] (= x 'pizza)) $))
+    (assert (some (fn [x] (= x ['pizza])) $))
+    (assert (some (fn [x] (= x [['pizza]])) $))
+    (assert (some (fn [x] (= x [[['pizza]]])) $))))
+
+(defn test-unwrapo-pizza-5 []
+  (let [$ (run 5 (fresh [x] (unwrapo x 'pizza)))]
+    (assert (= (len $) 5))
+    (assert (some (fn [x] (= x 'pizza)) $))
+    (assert (some (fn [x] (= x (cons 'pizza '_.0))) $))
+    (assert (some (fn [x] (= x (cons (cons 'pizza '_.0) '_.1))) $))
+    (assert (some (fn [x] (= x (cons (cons (cons 'pizza '_.0) '_.1) '_.2))) $))
+    (assert (some (fn [x] (= x (cons (cons (cons (cons 'pizza '_.0) '_.1) '_.2) '_.3))) $))))
+
+(defn test-unwrappo-pizza-nested-x []
+  (let [$ (run 5 (fresh [x] (unwrapo [[x]] 'pizza)))]
+    (assert (= (len $) 5))
+    (assert (some (fn [x] (= x 'pizza)) $))
+    (assert (some (fn [x] (= x (cons 'pizza '_.0))) $))
+    (assert (some (fn [x] (= x (cons (cons 'pizza '_.0) '_.1))) $))
+    (assert (some (fn [x] (= x (cons (cons (cons 'pizza '_.0) '_.1) '_.2))) $))
+    (assert (some (fn [x] (= x (cons (cons (cons (cons 'pizza '_.0) '_.1) '_.2) '_.3))) $))))

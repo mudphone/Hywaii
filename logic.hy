@@ -42,7 +42,10 @@
   (fresh [a d]
          (conso a d p)))
 
-;; (defn unwrapo [x out]
-;;   (conde
-;;    [(pairo)]))
+(defn unwrapo [x out]
+  (conde
+   [(== x out)]
+   [(pairo x) (fresh [a]
+                     (caro x a)
+                     (unwrapo a out))]))
 
