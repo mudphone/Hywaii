@@ -25,6 +25,11 @@ I’m not an expert on any of these things, just interested in hacking on fun to
 
 This μKanren implementation in [Hy] is heavily inspired by [Bodil Stokke’s Clojure implementation] and [talk at EuroClojure] and reading ["μKanren: A Minimal Functional Core for Relational Programming," by Jason Hemann and Daniel P. Friedman][muKanren paper].
 
+### Dependencies
+* python 3.5
+* pyrsistent
+* pytest
+
 ### Tests!
 Check out the tests for some examples. Run them with `$ py.test tests/__init__.py`
 
