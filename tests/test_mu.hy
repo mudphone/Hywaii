@@ -1,8 +1,9 @@
 (import [pyrsistent [pmap]]
-        [mu [*]])
+        [mu [*]]
+        pytest)
 
 ;; Cons
-(defn test-list? []
+(defn test-list []  
   (assert (list? (cons 1 [])))
   (assert (list? (cons 1 [2])))
   (assert (list? (cons 1 nil)))
@@ -11,25 +12,25 @@
   (assert (not (list? (cons 1 2))))
   (assert (not (list? (cons 1 (cons 1 2))))))
 
-(defn test-seq? []
+(defn test-seq []
   (assert (seq? [1]))
   (assert (seq? [1 2]))
   (assert (seq? (cons 1 nil)))
   (assert (not (seq? (cons 1 2)))))
 
-(defn test-null? []
+(defn test-null []
   (assert (null? nil))
   (assert (null? []))
   (assert (not (null? [1])))
   (assert (not (null? [1 2 3]))))
 
-(defn test-pair? []
+(defn test-pair []
   (assert (pair? [1]))
   (assert (not (pair? [])))
   (assert (not (pair? nil)))
   (assert (pair? (cons 1 2))))
 
-(defn test-fn? []
+(defn test-fn []
   (assert (fn? (fn [x] x)))
   (assert (not (fn? 1)))
   (assert (not (fn? [1])))
@@ -41,14 +42,14 @@
   (let [s (stor {(var 0) 5})]
     (assert (= (.get s (var 0)) 5))))
 
-(defn test-var? []
+(defn test-var []
   (assert (var? (var 0))))
 
 (defn test-stor-get []
   (let [s (stor {(var 0) 5})]
     (assert (= (stor-get s (var 0)) 5))))
 
-(defn test-stor-contains? []
+(defn test-stor-contains []
   (let [s (stor {(var 0) 5})]
     (assert (stor-contains? s (var 0)))
     (assert (not (stor-contains? s (var 1))))))

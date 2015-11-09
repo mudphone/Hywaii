@@ -1,4 +1,5 @@
-(import [user-mu [*]])
+(import [user-mu [*]]
+        pytest)
 (require user-mu)
 
 (defn test-zzz []

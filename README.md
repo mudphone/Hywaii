@@ -25,6 +25,9 @@ I’m not an expert on any of these things, just interested in hacking on fun to
 
 This μKanren implementation in [Hy] is heavily inspired by [Bodil Stokke’s Clojure implementation] and [talk at EuroClojure] and reading ["μKanren: A Minimal Functional Core for Relational Programming," by Jason Hemann and Daniel P. Friedman][muKanren paper].
 
+### Tests!
+Check out the tests for some examples. Run them with `$ py.test tests/__init__.py`
+
 ### I don't understand how any of this works.
 It's kind of tough to understand what relational programming is just by reading someone's website. But there are a lot of good online resources for learning about how to use μKanren. Once you understand what it's for, you can dive into how it's built.
 

@@ -1,5 +1,6 @@
 (import [mu [*]]
-        [logic [*]])
+        [logic [*]]
+        pytest)
 (require user-mu)
 
 (defn test-caro-acorn []
