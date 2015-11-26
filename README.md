@@ -8,7 +8,7 @@ Much appreciation to Bodil Stokke for explaining things clearly in her talk:
 [μKanren: Running the Little Things Backwards, EuroClojure, Barcelona, Spain, 25 June 2015][talk at EuroClojure].
 
 ## μKanren Relational Programming Basics, with Hy
-In ["How to Become a Hacker,"][hacker-howto] Eric Raymond explains that "Lisp is worth learning" to "make you a better programmer... even if you never actually use Lisp itself a lot." With [Hy], a fun Lisp powered by—and bi-directionally interoperable with—Python, we'll explore the μKanren relational logic system without leaving Python's comfy surroundings.
+With [Hy], a fun Lisp powered by—and bi-directionally interoperable with—Python, we'll explore the μKanren relational logic system without leaving Python's comfy surroundings.
 
 ### Why Lisp?
 The Lisp family of languages has inspired features which have found their way into Python and many other languages. Are you interested in Lisp, but unwilling to give up your investment in Python’s vast ecosystem? With [Hy], and the magical [Python AST], you can have it all: call [Hy] from Python, and Python from [Hy], learn some Lisp, and keep the Python tools you’ve come to love. [Hy] extends your reach into Lisp’s five-decade long heritage, while remaining interoperable with Python.
